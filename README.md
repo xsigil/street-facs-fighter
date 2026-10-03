@@ -7,7 +7,7 @@
 
 ## 🌟 Overview
 
-**Street FACS Fighter** is a terminal-based arcade combat game themed around the **Facial Action Coding System (FACS)**—the anatomical and psychological standard for categorizing human facial expressions.
+**Street FACS Fighter** is a terminal-based arcade combat game themed around the **Facial Action Coding System (FACS)**—the anatomical and psychological standard for categorizing human facial movements.
 
 Opponents' facial expressions are rendered directly inside your terminal emulator with high-fidelity **Sixel graphics**. Players must decode active facial muscles (**Action Units / AUs**) in real time and execute keystroke strikes before the enemy's Active Time Battle (ATB) gauge fills. When an opponent's facial tension reaches 100%, they unleash a devastating **Rage Attack**.
 
@@ -66,17 +66,25 @@ go run ./cmd/gen-se
 ```
 *(Creates `hit.wav`, `damage.wav`, `ko.wav`, and `lose.wav` under `assets/sounds/`)*
 
-### 3. Import Expression Dataset
+### 3. Place FACS Practice Images & Import to Database
 
-Place your licensed FACS training images (e.g., named with AU identifiers such as `s1_4.gif` or `s12.jpg`) into `assets/`, then build the SQLite index:
+Place your FACS training practice image files (e.g., from the manual practice sets or digital archives) directly into `assets/`, then build the SQLite index:
 
 ```bash
+# Ingest and parse all expression images into app.db
 make import
 ```
+*(Alternatively, execute `go run ./cmd/sff-importer` directly)*
 
 ### 4. Configure BGM Tracks (Optional)
 
-Place `assets/sounds/stage1.mp3` (combat background music) and `assets/sounds/lose.mp3` (results screen theme) to enable arcade soundtrack playback.
+Place your stage music (`stage1.mp3`) and results music (`lose.mp3`) under `assets/sounds/`:
+
+```bash
+# Automated deployment helper for local or downloaded tracks
+chmod +x scripts/setup_audio.sh
+./scripts/setup_audio.sh
+```
 
 ### 5. Launch the Game
 
@@ -90,13 +98,42 @@ make run
 
 ---
 
+## 📸 Dataset Import & Filename Conventions
+
+The game includes an automated expression importer (`cmd/sff-importer`) that scans `assets/` and indexes images into `app.db`. It automatically parses the standardized file naming conventions used across FACS training datasets and digital practice archives:
+
+```text
+assets/
+├── s1.gif             -> AU1 (Inner Brow Raiser)
+├── s4a.gif            -> AU4 (Brow Lowerer, variant a)
+├── s1_4a.gif          -> AU1 + AU4 (Multi-AU combo target)
+├── s6_12y25.gif       -> AU6 + AU12 + AU25 (Smile with cheek raise and parted lips)
+├── s10y_15z.gif       -> AU10 + AU15
+├── sW4_5x.gif         -> AU4 + AU5 (Model set W)
+└── sL20x_26.gif       -> AU20 + AU26 (Model set L)
+```
+
+### Parsing Rules
+
+| Filename Component | Meaning | Example |
+| :--- | :--- | :--- |
+| **Prefix (`s`, `sW`, `sL`, `sJ`)** | Subject / sample series indicator | `s`, `sW`, `sL` are stripped during parsing |
+| **Delimiters (`_`)** | Separates discrete AU combinations | `s1_4a.gif` targets AU `1` and AU `4` |
+| **Fused Identifiers** | Multi-digit combinations without underscores | `s1012x25.gif` extracts AU `10`, `12`, and `25` |
+| **Intensity & Variants (`a`, `b`, `x`, `y`, `z`)** | FACS intensity scores / variant markers | Stripped automatically to identify the base AU code |
+
+Once indexed into SQLite (`app.db`), the battle engine randomly selects targets per stage and verifies keystrokes against all extracted Action Units.
+
+---
+
 ## 🎮 How to Play
 
 - **Strike Weak-Point AUs**:
   - `12` + `Enter`: Single strike targeting AU12 (*Zygomaticus major*).
-  - `1 4` + `Enter`: Rapid multi-hit combo targeting both AU1 and AU4.
+  - `1 4` + `Enter`: Rapid multi-hit combo targeting both AU1 and AU4 simultaneously.
+  - Formats like `1, 4` or `AU1 AU4` are also accepted.
 - **Open FACS Cheat Sheet**:
-  - `?` + `Enter`: View comprehensive anatomical definitions and movement descriptions for all Action Units.
+  - `?` + `Enter`: View comprehensive anatomical definitions, muscle names, and movement descriptions for all Action Units.
 - **Switch Language**:
   - At the title screen, enter `E` + `Enter` for English, or `J` + `Enter` for Japanese.
 
@@ -105,15 +142,20 @@ make run
 ## 📂 Project Architecture
 
 ```text
+├── app.db                   # SQLite3 database storing indexed stages & target AUs
 ├── assets/                  # Expression images & audio assets (*not tracked in git*)
+│   ├── *.gif                # Practice face images (e.g., s1_4a.gif, s6_12y25.gif)
+│   └── sounds/              # Sound effects (WAV) and BGM (MP3)
 ├── cmd/
 │   ├── street-facs-fighter/ # Game entrypoint & terminal rendering engine
-│   ├── gen-se/              # Mathematical WAV sound synthesizer
-│   └── import/              # Image filename parsing & SQLite3 importer
+│   ├── sff-importer/        # Filename parsing & SQLite3 importer
+│   └── gen-se/              # Mathematical WAV sound synthesizer
 ├── internal/
-│   ├── domain/              # Entities & repository interfaces
-│   ├── infrastructure/      # SQLite3 drivers & Sixel encoders
+│   ├── domain/              # Entities (Question, Sample) & repository interfaces
+│   ├── infrastructure/      # SQLite3 drivers, repository implementations & Sixel encoders
 │   └── usecase/             # Combat loop & stage state management
+├── migrations/
+│   └── 001_init.sql         # Database schema for question and AU tables
 ├── scripts/
 │   └── setup_audio.sh       # Audio placement & deployment utility
 ├── Makefile
@@ -124,6 +166,6 @@ make run
 
 ## ⚠️ Notes & Disclaimer
 
-- This repository **does not contain copyrighted official FACS manual documents, test booklets, or proprietary face databases**.
+- This repository **does not distribute copyrighted official FACS manual documents, test booklets, or proprietary face databases**.
 - Users must supply their own authorized training images or open-source expression datasets under `assets/`.
 - This software is created purely for educational, cognitive science, and anatomical training purposes.
