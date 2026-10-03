@@ -1,0 +1,12 @@
+bin/
+*.db
+*.db-journal
+*.log
+.DS_Store
+# FACSの画像・メタデータは手元環境限定
+assets/*.jpg
+assets/*.jpeg
+assets/*.png
+questions.json
+assets/*.gif
+assets/sounds/
