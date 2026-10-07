@@ -1,171 +1,181 @@
-# 🥊 Street FACS Fighter
+# 🥊 Street FACS Fighter & Terminal FACS Atlas
 
-> **The Ultimate Action Unit Battle Arena in Your Terminal**  
-> Master facial muscle decoding (FACS) through real-time ATB combat and high-resolution Sixel graphics in a retro arcade-style terminal fighting game!
+[![Go Version](https://img.shields.io/badge/Go-1.22+-00ADD8?style=flat&logo=go)](https://golang.org)
+[![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Platform](https://img.shields.io/badge/Platform-Linux%20%7C%20macOS-black?logo=linux)](https://github.com)
+[![Protocol](https://img.shields.io/badge/Terminal-Sixel%20Graphics-orange)](https://github.com/mattn/go-sixel)
+
+> **"Can you decode human micro-expressions before time runs out?"**  
+> An arcade-style, terminal-native combat game and interactive diagnostic atlas based on Paul Ekman & Wallace V. Friesen's **Facial Action Coding System (FACS)**. Powered by high-resolution inline Sixel graphics, chiptune sound effects, and embedded master anatomical rationale datasets.
 
 ---
 
 ## 🌟 Overview
 
-**Street FACS Fighter** is a terminal-based arcade combat game themed around the **Facial Action Coding System (FACS)**—the anatomical and psychological standard for categorizing human facial movements.
+**Street FACS Fighter** reimagines facial expression analysis as a high-intensity terminal arcade experience and a modern CLI alternative to legacy FACS viewers. 
 
-Opponents' facial expressions are rendered directly inside your terminal emulator with high-fidelity **Sixel graphics**. Players must decode active facial muscles (**Action Units / AUs**) in real time and execute keystroke strikes before the enemy's Active Time Battle (ATB) gauge fills. When an opponent's facial tension reaches 100%, they unleash a devastating **Rage Attack**.
+Faces are rendered directly in your terminal using **Sixel graphics**. Players must observe subtle muscle contractions, identify the corresponding **Action Units (AUs)**, and execute keystrokes under real-time Active Time Battle (ATB) pressure before the opponent unleashes a devastating Rage Attack.
+
+The program also functions as **Street FACS Atlas / Manual**—a full-featured, zero-dependency interactive viewer to inspect, search, and study official master scoring examples alongside Paul Ekman's anatomical rationales.
 
 ---
 
-## ✨ Features
+## ✨ Key Features
 
-- **🖼️ Native In-Terminal Sixel Image Rendering**
-  - High-resolution rendering directly inside modern terminal emulators.
-  - Dynamic image filters: opponent portraits pulse with tension as ATB builds, flash with red shadows, and shake during impact.
-- **⚡ Real-Time Active Time Battle (ATB) Engine**
-  - High-intensity pressure mechanics where enemy gauge ticks up dynamically.
-  - Multi-target combo strikes supported via space- or comma-separated tokens (e.g., entering `1 4` or `12 25`).
-- **🎵 Seamless Audio & Sound Effects Engine**
-  - Automatic background playback integration with popular media players (`mpv`, `ffplay`, `pw-play`, `paplay`).
-  - Bundled mathematical waveform synthesizer (`cmd/gen-se`) generates punchy retro hit sounds, heavy damage impacts, victory fanfares, and defeat jingles on demand.
-- **📊 Post-Battle Review & Diagnostic Report**
-  - Displays Sixel thumbnails of each stage's face, correct AU targets, hit and miss history, strike accuracy percentage, and overall score.
-  - Awards official **FACS Analyst Ranks** (from Rank C apprentice to Rank S certified master).
+- **🖼️ Native In-Terminal Sixel Rendering**
+  - No legacy Java applets, browser plugins, or external GUI windows required.
+  - High-definition portrait rendering scaled dynamically to fit standard terminal windows without vertical scroll overflow.
+  - Reactive visual effects: red tint flash on enemy rage detonation and screen impacts.
+- **🥋 Strict FACS Official Input Validation (Hardcore Mode)**
+  - Bare numbers (e.g., `12` or `1 4`) are rejected as non-standard syntax.
+  - Enforces official FACS prefixes: Action Units (`AU12`, `AU4`), Action Descriptors (`AD19`, `AD38`), Head Movements (`M55`, `M68`), and lateralized unilateral expressions (`LAU12`, `RAU14`, `L12`, `R14`).
+  - Supports rapid multi-AU combo inputs separated by spaces or commas (e.g., `AU1 AU4` or `LAU12, AU25`).
+- **🧠 Embedded FACS Master Dataset (`//go:embed`)**
+  - Built-in TSV dataset containing scores, media paths, item IDs, splits, and comprehensive anatomical rationales.
+  - Standalone SQLite3 ingestion without external file dependencies.
+- **💡 Practice & Training Mode (`-training` / `practice`)**
+  - Pauses enemy ATB attacks entirely.
+  - Displays correct target Action Units, muscle descriptions, and concise Ekman guidance at the top of the HUD for stress-free observational training.
+- **📖 Street FACS Manual / Interactive Atlas Mode (`manual`)**
+  - Browse all reference expressions interactively with `[N]`ext, `[P]`rev, and `[Q]`uit.
+  - Filter specific Action Units on demand (e.g., `-manual -au 12`).
+  - Read full, unclipped anatomical explanations explaining why particular facial furrows, lid tighteners, or lip positions were scored.
+- **🎵 Synthesized Chiptune Audio & BGM Engine**
+  - Bundled mathematical waveform synthesizer (`cmd/gen-se`) generates 8-bit PCM WAV sound effects (`hit.wav`, `damage.wav`, `ko.wav`, `lose.wav`) on the fly.
+  - Seamless background music playback through standard CLI audio backends (`mpv`, `ffplay`, `pw-play`, `paplay`, `aplay`).
+- **📊 Post-Battle Diagnostic Report & Analyst Ranking**
+  - After battle or defeat, review each stage with Sixel thumbnails, official FACS scores, hit/miss logs, and Ekman's full anatomical rationales.
+  - Performance-based evaluation system awarding certified ranks from **Rank C (Novice)** up to **Rank S (Certified FACS Master)**.
 - **🌐 Full Bilingual Internationalization (i18n)**
-  - Toggle between English and Japanese on the fly from the title screen (`E` / `J`) or via CLI flag (`-lang en` / `-lang ja`).
-  - Anatomical muscle names (*Frontalis, pars medialis*, *Zygomaticus major*, etc.) fully translated in both languages.
+  - Seamlessly switch between Japanese and English from the title screen or CLI flag (`-lang en` / `-lang ja`).
 
 ---
 
 ## 💻 Requirements
 
-1. **Go**: Version 1.20 or newer
+1. **Go**: Version 1.22 or newer
 2. **Sixel-Compatible Terminal Emulator**:
-   - [WezTerm](https://wezfurlong.org/wezterm/) (Recommended)
-   - [iTerm2](https://iterm2.com/)
-   - [foot](https://codeberg.org/dnkl/foot)
-   - [mlterm](https://mlterm.sourceforge.net/)
-   - Windows Terminal (Preview with Sixel enabled)
-3. **Audio Player (Optional)**:
-   - Any one of `mpv`, `ffplay` (from ffmpeg), `pw-play` (PipeWire), or `paplay` (PulseAudio)
+   - `foot`, `wezterm`, `kitty` (with sixel support), `alacritty` (with sixel patch), `mintty`, `xterm`
+3. **Audio Player (Optional, for BGM / Sound Effects)**:
+   - Any of `mpv`, `ffplay`, `pw-play` (PipeWire), `paplay` (PulseAudio), or `aplay` (ALSA)
 
 ---
 
 ## 🚀 Quick Start
 
-### 1. Clone Repository & Install Dependencies
+### 1. Synthesize 8-Bit Sound Effects
 
-```bash
-git clone https://github.com/<YOUR_USER>/street-facs-fighter.git
-cd street-facs-fighter
-go mod tidy
-```
-
-### 2. Synthesize Sound Effects
-
-Generate retro 8-bit sound effects instantly using the built-in mathematical synthesizer:
+Generate the retro sound effects (Hit, Damage, KO, and Defeat) using the built-in mathematical synthesizer:
 
 ```bash
 go run ./cmd/gen-se
 ```
-*(Creates `hit.wav`, `damage.wav`, `ko.wav`, and `lose.wav` under `assets/sounds/`)*
+*(Writes `hit.wav`, `damage.wav`, `ko.wav`, and `lose.wav` to `assets/sounds/`)*
 
-### 3. Place FACS Practice Images & Import to Database
+### 2. Ingest Embedded FACS Master Dataset
 
-Place your FACS training practice image files (e.g., from the manual practice sets or digital archives) directly into `assets/`, then build the SQLite index:
-
-```bash
-# Ingest and parse all expression images into app.db
-make import
-```
-*(Alternatively, execute `go run ./cmd/sff-importer` directly)*
-
-### 4. Configure BGM Tracks (Optional)
-
-Place your stage music (`stage1.mp3`) and results music (`lose.mp3`) under `assets/sounds/`:
+Synchronize the embedded master dataset into the local SQLite database (`app.db`):
 
 ```bash
-# Automated deployment helper for local or downloaded tracks
-chmod +x scripts/setup_audio.sh
-./scripts/setup_audio.sh
+go run ./cmd/sff-importer
 ```
 
-### 5. Launch the Game
+### 3. Launch the Game
 
 ```bash
-# Launch in English mode directly
+go run ./cmd/street-facs-fighter
+```
+
+---
+
+## 🎮 Launch Modes & Usage
+
+### 🥊 Arcade Battle Mode
+Face a randomized series of expressions. Strike target Action Units before the opponent's ATB gauge reaches 100%:
+
+```bash
+# Default (Japanese UI)
+go run ./cmd/street-facs-fighter
+
+# English UI
 go run ./cmd/street-facs-fighter -lang en
+```
 
-# Or launch with default settings
-make run
+### 💡 Practice & Training Mode
+Train without enemy attacks. Correct AUs, muscle names, and anatomical hints remain visible on-screen:
+
+```bash
+go run ./cmd/street-facs-fighter -training
+# or
+go run ./cmd/street-facs-fighter practice
+```
+
+### 📖 Street FACS Manual / Atlas Browser
+Inspect the complete dataset as an interactive visual encyclopedia:
+
+```bash
+# Browse all items
+go run ./cmd/street-facs-fighter -manual
+# or
+go run ./cmd/street-facs-fighter manual
+
+# Filter by a specific Action Unit (e.g., AU12 - Zygomaticus major)
+go run ./cmd/street-facs-fighter -manual -au 12
 ```
 
 ---
 
-## 📸 Dataset Import & Filename Conventions
+## 🥋 Strike Input Syntax Rules
 
-The game includes an automated expression importer (`cmd/sff-importer`) that scans `assets/` and indexes images into `app.db`. It automatically parses the standardized file naming conventions used across FACS training datasets and digital practice archives:
+To mirror official FACS scoring rigor, bare numbers are marked as syntax errors. Use valid prefixes:
 
-```text
-assets/
-├── s1.gif             -> AU1 (Inner Brow Raiser)
-├── s4a.gif            -> AU4 (Brow Lowerer, variant a)
-├── s1_4a.gif          -> AU1 + AU4 (Multi-AU combo target)
-├── s6_12y25.gif       -> AU6 + AU12 + AU25 (Smile with cheek raise and parted lips)
-├── s10y_15z.gif       -> AU10 + AU15
-├── sW4_5x.gif         -> AU4 + AU5 (Model set W)
-└── sL20x_26.gif       -> AU20 + AU26 (Model set L)
-```
-
-### Parsing Rules
-
-| Filename Component | Meaning | Example |
-| :--- | :--- | :--- |
-| **Prefix (`s`, `sW`, `sL`, `sJ`)** | Subject / sample series indicator | `s`, `sW`, `sL` are stripped during parsing |
-| **Delimiters (`_`)** | Separates discrete AU combinations | `s1_4a.gif` targets AU `1` and AU `4` |
-| **Fused Identifiers** | Multi-digit combinations without underscores | `s1012x25.gif` extracts AU `10`, `12`, and `25` |
-| **Intensity & Variants (`a`, `b`, `x`, `y`, `z`)** | FACS intensity scores / variant markers | Stripped automatically to identify the base AU code |
-
-Once indexed into SQLite (`app.db`), the battle engine randomly selects targets per stage and verifies keystrokes against all extracted Action Units.
+| Input Example | Status | Description |
+| :--- | :---: | :--- |
+| `AU12` | ⭕ Valid | Action Unit 12 (*Zygomaticus major* / Lip Corner Puller) |
+| `AU1 AU4` | ⭕ Valid | Simultaneous combo targeting AU1 and AU4 |
+| `AU6, AU12, AU25` | ⭕ Valid | Comma-delimited multi-AU combo |
+| `LAU12` / `L12` | ⭕ Valid | Unilateral left AU12 |
+| `RAU14` / `R14` | ⭕ Valid | Unilateral right AU14 (*Buccinator* / Dimpler) |
+| `AD19` / `M55` | ⭕ Valid | Action Descriptors / Gross Head Movements |
+| `12` / `1 4` | ❌ Invalid | Missing prefix; counts as a miss and spikes enemy ATB |
+| `?` or `HINT` | 💡 Reference | Displays the Action Unit cheat sheet matrix |
 
 ---
 
-## 🎮 How to Play
-
-- **Strike Weak-Point AUs**:
-  - `12` + `Enter`: Single strike targeting AU12 (*Zygomaticus major*).
-  - `1 4` + `Enter`: Rapid multi-hit combo targeting both AU1 and AU4 simultaneously.
-  - Formats like `1, 4` or `AU1 AU4` are also accepted.
-- **Open FACS Cheat Sheet**:
-  - `?` + `Enter`: View comprehensive anatomical definitions, muscle names, and movement descriptions for all Action Units.
-- **Switch Language**:
-  - At the title screen, enter `E` + `Enter` for English, or `J` + `Enter` for Japanese.
-
----
-
-## 📂 Project Architecture
+## 📂 Project Structure
 
 ```text
-├── app.db                   # SQLite3 database storing indexed stages & target AUs
-├── assets/                  # Expression images & audio assets (*not tracked in git*)
-│   ├── *.gif                # Practice face images (e.g., s1_4a.gif, s6_12y25.gif)
-│   └── sounds/              # Sound effects (WAV) and BGM (MP3)
+.
 ├── cmd/
-│   ├── street-facs-fighter/ # Game entrypoint & terminal rendering engine
-│   ├── sff-importer/        # Filename parsing & SQLite3 importer
-│   └── gen-se/              # Mathematical WAV sound synthesizer
+│   ├── gen-se/              # 8-bit algorithmic WAV sound synthesizer
+│   ├── sff-importer/        # Embedded TSV master importer to SQLite3
+│   └── street-facs-fighter/ # Game engine & interactive Atlas CLI
 ├── internal/
-│   ├── domain/              # Entities (Question, Sample) & repository interfaces
-│   ├── infrastructure/      # SQLite3 drivers, repository implementations & Sixel encoders
-│   └── usecase/             # Combat loop & stage state management
-├── migrations/
-│   └── 001_init.sql         # Database schema for question and AU tables
-├── scripts/
-│   └── setup_audio.sh       # Audio placement & deployment utility
-├── Makefile
-└── README.md
+│   ├── audio/               # BGM & SE playback controller
+│   ├── domain/
+│   │   ├── entity/          # Question & TargetAU domain entities
+│   │   ├── locale/          # Bilingual localization (JA / EN) & AU dictionaries
+│   │   └── repository/      # Repository & transaction interfaces
+│   ├── infrastructure/
+│   │   └── sqlite3/         # SQLite3 persistence & transaction manager
+│   ├── ui/
+│   │   ├── input/           # Raw terminal mode & non-blocking input listener
+│   │   └── terminal/        # Inline Sixel rendering, rage shaders & text wrapping
+│   └── usecase/             # Combat loop, manual viewer, and import usecases
+└── assets/
+    ├── sounds/              # BGM (MP3) and synthesized effects (WAV)
+    └── *.gif                # Practice facial expressions & animations
 ```
 
 ---
 
-## ⚠️ Notes & Disclaimer
+## ⚠️ Disclaimer
 
-- This repository **does not distribute copyrighted official FACS manual documents, test booklets, or proprietary face databases**.
-- Users must supply their own authorized training images or open-source expression datasets under `assets/`.
-- This software is created purely for educational, cognitive science, and anatomical training purposes.
+- This software is developed solely for educational, psychological, and cognitive neuroscience training purposes.
+- This repository does not redistribute proprietary examination materials or copyrighted reference manuals. Users may supply authorized local training images under `assets/`.
+
+---
+
+## 📜 License
+
+MIT License. See [LICENSE](LICENSE) for details.
