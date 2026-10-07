@@ -9,3 +9,4 @@ assets/*.jpeg
 assets/*.png
 questions.json
 assets/*.gif
+app.db
