@@ -20,11 +20,12 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/mattn/go-sixel"
-	"golang.org/x/image/draw"
 	"street-facs-fighter/internal/domain/entity"
 	"street-facs-fighter/internal/infrastructure/sqlite3"
 	"street-facs-fighter/internal/usecase"
+
+	"github.com/mattn/go-sixel"
+	"golang.org/x/image/draw"
 )
 
 type Localization struct {
@@ -64,32 +65,32 @@ var locJA = Localization{
 ===========================================================
   🥊 STREET FACS FIGHTER - ターミナル表情筋格闘ゲーム 🥊
 ===========================================================`,
-	LangPrompt:      "言語切替 (Switch Lang): [J: 日本語] / [E: English] (切替は 'e' または 'j' を入力してEnter)",
-	StartPrompt:     ">>> [Enter]キーを押して FIGHT! <<<",
-	TargetHP:        "TARGET HP",
-	EnemyATB:        "ENEMY TENSION",
-	StrikePrompt:    "急所AUを撃て！ (例: 1 4 / ヒント: '?'): ",
-	HitBanner:       "💥 クリティカルHIT！急所AUを破壊！",
-	MissBanner:      "❌ MISS！相手のテンションが急上昇！",
-	KoTitle:         "\n🌟🌟🌟 TARGET K.O.!! 🌟🌟🌟",
-	KoSubtitle:      "全ターゲットAUの破壊に成功！",
-	RageAttackTitle: "⚡⚡⚡ 敵の怒り攻撃が炸裂！ ⚡⚡⚡",
-	DestroyedHeader: "【破壊済みAU部位】:",
-	CheatSheetTitle: "【FACS アクション・ユニット (AU) あんちょこ速見表】",
-	CheatSheetExit:  "[Enter]キーを押して戦闘に戻る...",
-	ReportTitle:     "\n=================== 戦闘結果解析レポート ===================",
-	ReportSubtitle:  "各ステージで出現した表情写真と解析結果一覧:",
-	StageLabel:      "ステージ",
-	TargetLabel:     "正解AU",
-	HitsLabel:       "命中AU",
-	MissesLabel:     "誤入力",
-	ClearedStatus:   "【撃破 K.O.】",
-	FailedStatus:    "【被弾敗北】",
+	LangPrompt:        "言語切替 (Switch Lang): [J: 日本語] / [E: English] (切替は 'e' または 'j' を入力してEnter)",
+	StartPrompt:       ">>> [Enter]キーを押して FIGHT! <<<",
+	TargetHP:          "TARGET HP",
+	EnemyATB:          "ENEMY TENSION",
+	StrikePrompt:      "急所AUを撃て！ (例: 1 4 / ヒント: '?'): ",
+	HitBanner:         "💥 クリティカルHIT！急所AUを破壊！",
+	MissBanner:        "❌ MISS！相手のテンションが急上昇！",
+	KoTitle:           "\n🌟🌟🌟 TARGET K.O.!! 🌟🌟🌟",
+	KoSubtitle:        "全ターゲットAUの破壊に成功！",
+	RageAttackTitle:   "⚡⚡⚡ 敵の怒り攻撃が炸裂！ ⚡⚡⚡",
+	DestroyedHeader:   "【破壊済みAU部位】:",
+	CheatSheetTitle:   "【FACS アクション・ユニット (AU) あんちょこ速見表】",
+	CheatSheetExit:    "[Enter]キーを押して戦闘に戻る...",
+	ReportTitle:       "\n=================== 戦闘結果解析レポート ===================",
+	ReportSubtitle:    "各ステージで出現した表情写真と解析結果一覧:",
+	StageLabel:        "ステージ",
+	TargetLabel:       "正解AU",
+	HitsLabel:         "命中AU",
+	MissesLabel:       "誤入力",
+	ClearedStatus:     "【撃破 K.O.】",
+	FailedStatus:      "【被弾敗北】",
 	TotalStrikesLabel: "総打撃数",
-	AccuracyLabel:   "命中精度 (正答率)",
-	FinalScoreLabel: "最終獲得スコア",
-	RankLabel:       "FACS解析官ランク",
-	ExitPrompt:      "[Enter]キーを押してゲームを終了します...",
+	AccuracyLabel:     "命中精度 (正答率)",
+	FinalScoreLabel:   "最終獲得スコア",
+	RankLabel:         "FACS解析官ランク",
+	ExitPrompt:        "[Enter]キーを押してゲームを終了します...",
 	EnemyAttacks: []string{
 		"「フッ…貴様に私の真の感情が見抜けるか！」",
 		"「筋肉の弛緩が遅い！出直してくるんだな！」",
@@ -127,32 +128,32 @@ var locEN = Localization{
 ===========================================================
   🥊 STREET FACS FIGHTER - TERMINAL FACIAL ACTION BATTLE 🥊
 ===========================================================`,
-	LangPrompt:      "Switch Language: [J: Japanese] / [E: English] (Type 'e' or 'j' and press Enter)",
-	StartPrompt:     ">>> Press [Enter] to FIGHT! <<<",
-	TargetHP:        "TARGET HP",
-	EnemyATB:        "ENEMY TENSION",
-	StrikePrompt:    "Strike Target AU! (e.g. 1 4 / Hint: '?'): ",
-	HitBanner:       "💥 CRITICAL HIT! Target Action Unit Destroyed!",
-	MissBanner:      "❌ MISS! Opponent Tension Spiked!",
-	KoTitle:         "\n🌟🌟🌟 TARGET K.O.!! 🌟🌟🌟",
-	KoSubtitle:      "All target Action Units successfully neutralized!",
-	RageAttackTitle: "⚡⚡⚡ ENEMY RAGE ATTACK DETONATED! ⚡⚡⚡",
-	DestroyedHeader: "【Destroyed Action Units】:",
-	CheatSheetTitle: "【FACS Action Unit (AU) Reference Matrix】",
-	CheatSheetExit:  "Press [Enter] to resume combat...",
-	ReportTitle:     "\n================ COMBAT DIAGNOSTIC REPORT ================",
-	ReportSubtitle:  "Target Facial Expressions and Performance History:",
-	StageLabel:      "STAGE",
-	TargetLabel:     "Target AU",
-	HitsLabel:       "Hit AUs",
-	MissesLabel:     "Misses",
-	ClearedStatus:   "【CLEARED K.O.】",
-	FailedStatus:    "【DEFEATED】",
+	LangPrompt:        "Switch Language: [J: Japanese] / [E: English] (Type 'e' or 'j' and press Enter)",
+	StartPrompt:       ">>> Press [Enter] to FIGHT! <<<",
+	TargetHP:          "TARGET HP",
+	EnemyATB:          "ENEMY TENSION",
+	StrikePrompt:      "Strike Target AU! (e.g. 1 4 / Hint: '?'): ",
+	HitBanner:         "💥 CRITICAL HIT! Target Action Unit Destroyed!",
+	MissBanner:        "❌ MISS! Opponent Tension Spiked!",
+	KoTitle:           "\n🌟🌟🌟 TARGET K.O.!! 🌟🌟🌟",
+	KoSubtitle:        "All target Action Units successfully neutralized!",
+	RageAttackTitle:   "⚡⚡⚡ ENEMY RAGE ATTACK DETONATED! ⚡⚡⚡",
+	DestroyedHeader:   "【Destroyed Action Units】:",
+	CheatSheetTitle:   "【FACS Action Unit (AU) Reference Matrix】",
+	CheatSheetExit:    "Press [Enter] to resume combat...",
+	ReportTitle:       "\n================ COMBAT DIAGNOSTIC REPORT ================",
+	ReportSubtitle:    "Target Facial Expressions and Performance History:",
+	StageLabel:        "STAGE",
+	TargetLabel:       "Target AU",
+	HitsLabel:         "Hit AUs",
+	MissesLabel:       "Misses",
+	ClearedStatus:     "【CLEARED K.O.】",
+	FailedStatus:      "【DEFEATED】",
 	TotalStrikesLabel: "Total Strikes",
-	AccuracyLabel:   "Strike Accuracy",
-	FinalScoreLabel: "Final Combat Score",
-	RankLabel:       "FACS Analyst Rank",
-	ExitPrompt:      "Press [Enter] to exit the game...",
+	AccuracyLabel:     "Strike Accuracy",
+	FinalScoreLabel:   "Final Combat Score",
+	RankLabel:         "FACS Analyst Rank",
+	ExitPrompt:        "Press [Enter] to exit the game...",
 	EnemyAttacks: []string{
 		"\"Ha! Can you decode my genuine micro-expression?!\"",
 		"\"Too slow! Your ocular calibration is lagging!\"",
@@ -188,6 +189,8 @@ var locEN = Localization{
 type StageRecord struct {
 	StageNum   int
 	FilePath   string
+	RawScore   string // 原典スコア表記 (例: "7D+9D+17B")
+	Rationale  string // 解剖学的解説
 	Targets    []entity.TargetAU
 	HitAUs     []string
 	MissInputs []string
@@ -495,14 +498,14 @@ func printBattleReport(records []StageRecord, totalScore int, inputCtrl *InputCo
 	totalMisses := 0
 
 	for _, rec := range records {
-		fmt.Printf("\x1b[1;33m--------------------------------------------------\x1b[0m\n")
+		fmt.Printf("\x1b[1;33m====================================================================\x1b[0m\n")
 		statusStr := "\x1b[1;32m" + loc.ClearedStatus + "\x1b[0m"
 		if !rec.Cleared {
 			statusStr = "\x1b[1;31m" + loc.FailedStatus + "\x1b[0m"
 		}
 		fmt.Printf("%s %d: %s  %s\n", loc.StageLabel, rec.StageNum, rec.FilePath, statusStr)
 
-		// Render thumbnail Sixel (width 160px)
+		// サムネイル表示 (Sixel: 横幅 160px)
 		if f, err := os.Open(rec.FilePath); err == nil {
 			if thumbImg, _, err := image.Decode(f); err == nil {
 				renderImageSixel(thumbImg, 160, 0)
@@ -510,15 +513,20 @@ func printBattleReport(records []StageRecord, totalScore int, inputCtrl *InputCo
 			f.Close()
 		}
 
-		// Correct target Action Units
+		// 公式正解表記
+		if rec.RawScore != "" {
+			fmt.Printf("\n  \x1b[1;35m公式FACSスコア\x1b[0m : \x1b[1;37m%s\x1b[0m\n", rec.RawScore)
+		}
+
+		// 正解AUリストと部位名
 		var targetCodes []string
 		for _, t := range rec.Targets {
 			desc := loc.AUDictionary[t.Code]
 			targetCodes = append(targetCodes, fmt.Sprintf("AU%s (%s)", t.Code, desc))
 		}
-		fmt.Printf("\n  \x1b[1;35m%s\x1b[0m: %s\n", loc.TargetLabel, strings.Join(targetCodes, ", "))
+		fmt.Printf("  \x1b[1;35m%s\x1b[0m: %s\n", loc.TargetLabel, strings.Join(targetCodes, ", "))
 
-		// Hit AUs
+		// ヒットしたAU
 		if len(rec.HitAUs) > 0 {
 			var hits []string
 			for _, h := range rec.HitAUs {
@@ -530,12 +538,17 @@ func printBattleReport(records []StageRecord, totalScore int, inputCtrl *InputCo
 			fmt.Printf("  \x1b[1;32m%s\x1b[0m   : (None)\n", loc.HitsLabel)
 		}
 
-		// Missed inputs
+		// ミス入力
 		if len(rec.MissInputs) > 0 {
 			fmt.Printf("  \x1b[1;31m%s\x1b[0m   : %s\n", loc.MissesLabel, strings.Join(rec.MissInputs, ", "))
 			totalMisses += len(rec.MissInputs)
-		} else {
-			fmt.Printf("  \x1b[1;31m%s\x1b[0m   : (0)\n", loc.MissesLabel)
+		}
+
+		// ★ ポール・エクマン公式の解剖学的判定理由 (Rationale)
+		if rec.Rationale != "" {
+			fmt.Println("\n  \x1b[1;34m【FACS 解剖判定解説 (Rationale)】\x1b[0m:")
+			// 長文解説を行儀よく折り返して表示
+			wrapRationale(rec.Rationale, 70, "    ")
 		}
 		fmt.Println()
 	}
@@ -568,6 +581,31 @@ func printBattleReport(records []StageRecord, totalScore int, inputCtrl *InputCo
 
 	fmt.Printf("\x1b[1;32m%s\x1b[0m\n", loc.ExitPrompt)
 	<-inputCtrl.commitChan
+}
+
+// ターミナル幅に合わせて長文を綺麗に改行するヘルパー関数
+func wrapRationale(text string, width int, prefix string) {
+	words := strings.Fields(text)
+	if len(words) == 0 {
+		return
+	}
+
+	line := prefix
+	for _, w := range words {
+		if len(line)+len(w)+1 > width {
+			fmt.Println(line)
+			line = prefix + w
+		} else {
+			if line == prefix {
+				line += w
+			} else {
+				line += " " + w
+			}
+		}
+	}
+	if line != prefix {
+		fmt.Println(line)
+	}
 }
 
 func main() {
@@ -652,9 +690,11 @@ func main() {
 		var hitLog []string
 
 		currentRecord := StageRecord{
-			StageNum: stageIdx + 1,
-			FilePath: q.FilePath,
-			Targets:  q.Targets,
+			StageNum:  stageIdx + 1,
+			FilePath:  q.FilePath,
+			RawScore:  q.RawScore,
+			Rationale: q.Rationale,
+			Targets:   q.Targets,
 		}
 
 		enemyATB := 0
