@@ -61,6 +61,51 @@ The program also functions as **Street FACS Atlas / Manual**—a full-featured, 
 
 ---
 
+「`/mnt` にDVDがなくても使えるのか？」という疑問を完全に解消し、**3パターンのアセット取り込み方法（①ローカル `assets/` 直接配置、②ISOイメージのループバックマウント、③物理CD/DVDマウント）** を明記した `README.md` の更新内容と、`v0.1.1` のリリース手順です。
+
+---
+
+## 📀 FACS Dataset & Media Ingestion
+
+The master scoring dataset (`facs_master_dataset.tsv`) and Paul Ekman's anatomical rationales are **already embedded directly into the Go binary (`//go:embed`)**. 
+
+To render the actual facial expressions and video examples via Sixel, you can supply your licensed media files using any of the following methods:
+
+### Method 1: Local `assets/` Directory (Recommended - No Mount Required)
+Copy your practice image files (e.g., `.gif`, `.jpg`, `.png`) directly into the local `assets/` folder:
+```bash
+# Copy your extracted FACS images into assets/
+cp /path/to/extracted_media/*.gif ./assets/
+
+# Ingest and map to local SQLite database
+go run ./cmd/sff-importer
+
+```
+
+*Note: The engine automatically checks `os.Stat(filePath)`. It indexes and serves all available local media without requiring DVD drives.*
+
+### Method 2: Mount an ISO / Disk Image (Loopback Mount)
+
+If you have an archived `.iso` or disk image of the FACS reference media:
+
+```bash
+sudo mkdir -p /mnt/Manual
+sudo mount -o loop /path/to/facs_manual.iso /mnt/Manual
+
+```
+
+### Method 3: Physical CD-ROM / DVD Drive
+
+If using original optical media:
+
+```bash
+sudo mkdir -p /mnt/Manual
+sudo mount /dev/cdrom /mnt/Manual
+
+```
+
+---
+
 ## 🚀 Quick Start
 
 ### 1. Synthesize 8-Bit Sound Effects
